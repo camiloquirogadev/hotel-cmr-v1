@@ -1,0 +1,13 @@
+# Node modules
+client/node_modules/
+server/node_modules/
+
+# Entornos
+client/.env
+server/.env
+
+# Volumen de la base de datos
+db-data/
+
+# Archivos del sistema
+.DS_Store

@@ -53,10 +53,10 @@ function Rooms() {
     setEditingRoom(null);
   };
 
-  if (loading) return <p className="text-center mt-6">Cargando habitaciones...</p>;
+  if (loading) return <p className="text-center mt-6 dark:text-white">Cargando habitaciones...</p>;
 
   return (
-    <div className="p-6">
+    <div className="p-6 min-h-screen bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
       <h1 className="text-3xl font-bold text-center mb-6">Habitaciones</h1>
 
       <AddRoomForm
@@ -67,8 +67,8 @@ function Rooms() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {rooms.map((room) => (
-          <div key={room.id} className="bg-white shadow rounded p-4">
-            <h3 className="text-xl font-semibold text-pink-600">Habitación #{room.number}</h3>
+          <div key={room.id} className="bg-slate-100 dark:bg-slate-800 shadow rounded p-4">
+            <h3 className="text-xl font-semibold text-pink-600 dark:text-pink-400">Habitación #{room.number}</h3>
             <p>Tipo: {room.type}</p>
             <p>Capacidad: {room.capacity || 0} personas</p>
             <p>Precio: ${room.price}</p>

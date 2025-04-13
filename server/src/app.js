@@ -23,9 +23,19 @@ app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/reservations', reservationRoutes);
 
-// CONEXIÓN A LA DB
-sequelize.sync()
-  .then(() => console.log('📦 Base de datos sincronizada'))
-  .catch((err) => console.error('❌ Error al sincronizar DB:', err));
 
-module.exports = app;
+// CONEXIÓN A LA DB
+
+const statusRoutes = require('./routes/statusRoutes');
+app.use('/api/status', statusRoutes);
+
+sequelize.sync()
+  .then(() => {
+    console.log('📦 Base de datos sincronizada');
+    
+    // 🚀 Escuchar el puerto una vez que sincroniza
+    app.listen(5000, () => {
+      console.log('✅ Servidor corriendo en http://localhost:5000');
+    });
+  })
+  .catch((err) => console.error('❌ Error al sincronizar DB:', err));

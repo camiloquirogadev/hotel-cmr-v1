@@ -3,11 +3,21 @@ import AddReservationForm from "../components/AddReservationForm";
 
 function Reservations() {
   const [reservations, setReservations] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingReservation, setEditingReservation] = useState(null);
 
   useEffect(() => {
+    fetchRooms();
     fetchReservations();
   }, []);
+
+  const fetchRooms = () => {
+    fetch("http://localhost:5000/api/rooms")
+      .then((res) => res.json())
+      .then((data) => setRooms(data))
+      .catch((err) => console.error("Error al obtener habitaciones:", err));
+  };
 
   const fetchReservations = () => {
     fetch("http://localhost:5000/api/reservations")
@@ -22,8 +32,9 @@ function Reservations() {
       });
   };
 
-  const handleCreated = (newReservation) => {
-    fetchReservations(); // o setReservations([...reservations, newReservation]);
+  const handleCreatedOrUpdated = () => {
+    setEditingReservation(null);
+    fetchReservations();
   };
 
   const handleDelete = async (id) => {
@@ -40,13 +51,25 @@ function Reservations() {
     }
   };
 
+  const handleEdit = (res) => {
+    const room = rooms.find((r) => r.number == res.roomNumber);
+    setEditingReservation({
+      ...res,
+      roomId: room?.id || "",
+    });
+  };
+
   if (loading) return <p className="text-center mt-6">Cargando reservas...</p>;
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-center mb-6">Reservas</h1>
 
-      <AddReservationForm onReservationCreated={handleCreated} />
+      <AddReservationForm
+        onReservationCreated={handleCreatedOrUpdated}
+        editingReservation={editingReservation}
+        setEditingReservation={setEditingReservation}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {reservations.map((res) => (
@@ -68,12 +91,20 @@ function Reservations() {
                 {res.status}
               </span>
             </p>
-            <button
-              onClick={() => handleDelete(res.id)}
-              className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Eliminar
-            </button>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => handleEdit(res)}
+                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleDelete(res.id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Eliminar
+              </button>
+            </div>
           </div>
         ))}
       </div>

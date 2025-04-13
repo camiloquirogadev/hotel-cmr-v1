@@ -1,19 +1,36 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/db');
 const Room = require('./Room');
-const User = require('./User');
 
 const Reservation = sequelize.define('Reservation', {
-  checkin: { type: DataTypes.DATE, allowNull: false },
-  checkout: { type: DataTypes.DATE, allowNull: false },
-  status: { type: DataTypes.STRING, defaultValue: 'pendiente' } // pendiente | confirmada | cancelada
+  guestName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  checkInDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  checkOutDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'confirmada',
+  },
+  roomId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Room,
+      key: 'id'
+    }
+  }
 });
 
-// Relaciones
-Room.hasMany(Reservation, { foreignKey: 'roomId' });
-Reservation.belongsTo(Room);
-
-User.hasMany(Reservation, { foreignKey: 'userId' });
-Reservation.belongsTo(User);
+// Relación con habitación
+Reservation.belongsTo(Room, { foreignKey: 'roomId' });
 
 module.exports = Reservation;

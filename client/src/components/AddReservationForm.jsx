@@ -1,22 +1,34 @@
 import { useState, useEffect } from "react";
 
-function AddReservationForm({ onReservationCreated }) {
+function AddReservationForm({ onReservationCreated, editingReservation, setEditingReservation }) {
   const [form, setForm] = useState({
-    guestName: '',
-    roomId: '',
-    checkInDate: '',
-    checkOutDate: '',
-    status: 'confirmada'
+    guestName: "",
+    roomId: "",
+    checkInDate: "",
+    checkOutDate: "",
+    status: "confirmada",
   });
-
   const [rooms, setRooms] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/api/rooms")
-      .then(res => res.json())
-      .then(data => setRooms(data))
-      .catch(err => console.error("Error al cargar habitaciones:", err));
+      .then((res) => res.json())
+      .then((data) => setRooms(data))
+      .catch((err) => console.error("Error al cargar habitaciones:", err));
   }, []);
+
+  useEffect(() => {
+    if (editingReservation) {
+      setForm({
+        guestName: editingReservation.guestName || "",
+        roomId: editingReservation.roomId || "",
+        checkInDate: editingReservation.checkInDate,
+        checkOutDate: editingReservation.checkOutDate,
+        status: editingReservation.status || "confirmada",
+      });
+    }
+  }, [editingReservation]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,11 +38,30 @@ function AddReservationForm({ onReservationCreated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validaciones
+    if (!form.checkInDate || !form.checkOutDate) {
+      setError("Ambas fechas son requeridas");
+      return;
+    }
+
+    if (new Date(form.checkInDate) > new Date(form.checkOutDate)) {
+      setError("La fecha de entrada debe ser anterior a la de salida");
+      return;
+    }
+
+    setError("");
+
+    const url = editingReservation
+      ? `http://localhost:5000/api/reservations/${editingReservation.id}`
+      : "http://localhost:5000/api/reservations";
+
+    const method = editingReservation ? "PUT" : "POST";
+
     try {
-      const res = await fetch("http://localhost:5000/api/reservations", {
-        method: "POST",
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
@@ -38,23 +69,31 @@ function AddReservationForm({ onReservationCreated }) {
       if (res.ok) {
         onReservationCreated(data);
         setForm({
-          guestName: '',
-          roomId: '',
-          checkInDate: '',
-          checkOutDate: '',
-          status: 'confirmada'
+          guestName: "",
+          roomId: "",
+          checkInDate: "",
+          checkOutDate: "",
+          status: "confirmada",
         });
+        setEditingReservation(null);
       } else {
-        console.error("Error al crear reserva:", data.error);
+        console.error("Error al guardar reserva:", data.error);
+        setError("No se pudo guardar la reserva");
       }
     } catch (error) {
       console.error("Error:", error);
+      setError("Error de conexión con el servidor");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6">
-      <h2 className="text-xl font-bold text-slate-800 mb-4">Crear reserva</h2>
+      <h2 className="text-xl font-bold text-slate-800 mb-4">
+        {editingReservation ? "Editar reserva" : "Crear reserva"}
+      </h2>
+
+      {error && <p className="text-red-600 mb-3">{error}</p>}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
@@ -105,12 +144,24 @@ function AddReservationForm({ onReservationCreated }) {
           <option value="pendiente">Pendiente</option>
         </select>
       </div>
-      <button
-        type="submit"
-        className="mt-4 px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
-      >
-        Guardar reserva
-      </button>
+
+      <div className="mt-4 flex gap-4">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
+        >
+          {editingReservation ? "Guardar cambios" : "Guardar reserva"}
+        </button>
+        {editingReservation && (
+          <button
+            type="button"
+            onClick={() => setEditingReservation(null)}
+            className="px-4 py-2 bg-gray-300 text-slate-800 rounded hover:bg-gray-400"
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
     </form>
   );
 }

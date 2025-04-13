@@ -34,7 +34,7 @@ app.use('/api/status', statusRoutes);
 sequelize.sync()
   .then(() => {
     console.log('📦 Base de datos sincronizada');
-    
+    sequelize.sync({ alter: true }) 
     // 🚀 Escuchar el puerto una vez que sincroniza
     app.listen(5000, () => {
       console.log('✅ Servidor corriendo en http://localhost:5000');

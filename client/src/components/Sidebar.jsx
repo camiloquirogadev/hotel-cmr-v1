@@ -39,7 +39,7 @@ function Sidebar() {
   };
 
   return (
-    <aside className={`fixed top-0 left-0 h-full z-40 bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+    <aside className={`h-screen bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
       <div className="h-16 flex items-center justify-between px-4 border-b dark:border-slate-700">
         <h1 className={`text-xl font-bold text-pink-600 transition-all ${collapsed ? "hidden" : "block"}`}>Hotel CMR</h1>
         <button onClick={() => setCollapsed(!collapsed)} className="text-slate-500 dark:text-slate-300">
@@ -81,8 +81,8 @@ function Sidebar() {
           onClick={toggleTheme}
           className="w-full flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 border px-2 py-1 rounded"
         >
-          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          {!collapsed && (darkMode ? "Modo claro" : "Modo oscuro")}
+          {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+          {!collapsed && (darkMode ? "Modo oscuro" : "Modo claro")}
         </button>
       </div>
     </aside>

@@ -1,17 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { Menu, X } from "lucide-react"; // si usás lucide-react o cambiamos por íconos unicode
+import { Home, Bed, Calendar, Users, Sun, Moon, LogOut, Menu, X } from "lucide-react";
 
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [darkMode, setDarkMode] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
       document.documentElement.classList.add("dark");
       setDarkMode(true);
     }
@@ -31,76 +32,57 @@ function Navbar() {
 
   if (!user) return null;
 
+  const navLinkStyle = (path) =>
+    `flex items-center gap-2 px-4 py-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition ${
+      location.pathname === path ? "bg-slate-200 dark:bg-slate-800 font-semibold" : ""
+    }`;
+
   return (
-    <nav className="bg-white dark:bg-slate-900 dark:text-white p-4 shadow">
-      <div className="flex justify-between items-center">
-        <div className="font-bold text-xl">
-          <Link to="/dashboard">Hotel CMR</Link>
-        </div>
-
-        {/* Botón hamburguesa visible solo en mobile */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="sm:hidden text-2xl"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-slate-900 text-slate-800 dark:text-white shadow-lg z-50 flex flex-col justify-between">
+      {/* Encabezado */}
+      <div className="p-6 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-pink-600">Hotel CMR</h1>
+        <button onClick={() => setCollapsed(!collapsed)} className="sm:hidden">
+          {collapsed ? <Menu size={22} /> : <X size={22} />}
         </button>
-
-        {/* Menu en desktop */}
-        <div className="hidden sm:flex items-center gap-4">
-          <Link to="/dashboard" className="hover:underline">Panel</Link>
-          <Link to="/rooms" className="hover:underline">Habitaciones</Link>
-          <Link to="/reservations" className="hover:underline">Reservas</Link>
-          <Link to="/guests" className="hover:underline">Huéspedes</Link>
-     
-          <button
-            onClick={toggleDarkMode}
-            className="text-xl hover:scale-110 transition-transform"
-            title="Cambiar tema"
-          >
-            {darkMode ? "🌙" : "🌞"}
-          </button>
-     <span className="text-sm italic">
-            👋 Hola, <span className="font-semibold">{user.user?.name}</span>
-          </span>
-          <button
-            onClick={handleLogout}
-            className="bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 text-sm"
-          >
-            Cerrar sesión
-          </button>
-        </div>
       </div>
 
-      {/* Menu colapsable en mobile */}
-      {menuOpen && (
-        <div className="sm:hidden mt-4 flex flex-col gap-2">
-          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Panel</Link>
-          <Link to="/rooms" onClick={() => setMenuOpen(false)}>Habitaciones</Link>
-          <Link to="/reservations" onClick={() => setMenuOpen(false)}>Reservas</Link>
-          <Link to="/guests" className="hover:underline">Huéspedes</Link>
-    
-          <button
-            onClick={toggleDarkMode}
-            className="text-xl hover:scale-110 transition-transform"
-            title="Cambiar tema"
-          >
-            {darkMode ? "🌙" : "🌞"}
-          </button> 
-               <span className="text-sm italic">
-            👋 Hola, <span className="font-semibold">{user.user?.name}</span>
-          </span>
+      {/* Navegación */}
+      <nav className="flex-1 px-4 space-y-2">
+        <Link to="/dashboard" className={navLinkStyle("/dashboard")}>
+          <Home size={18} /> Panel
+        </Link>
+        <Link to="/rooms" className={navLinkStyle("/rooms")}>
+          <Bed size={18} /> Habitaciones
+        </Link>
+        <Link to="/reservations" className={navLinkStyle("/reservations")}>
+          <Calendar size={18} /> Reservas
+        </Link>
+        <Link to="/guests" className={navLinkStyle("/guests")}>
+          <Users size={18} /> Huéspedes
+        </Link>
+      </nav>
 
-          <button
-            onClick={handleLogout}
-            className="bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 text-sm"
-          >
-            Cerrar sesión
-          </button>
+      {/* Controles inferiores */}
+      <div className="border-t dark:border-slate-700 px-4 py-4 space-y-3">
+        <p className="text-sm italic">👋 Hola, <strong>{user.user?.name}</strong></p>
 
-        </div>
-      )}
-    </nav>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-sm px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-full"
+        >
+          <LogOut size={16} /> Cerrar sesión
+        </button>
+
+        <button
+          onClick={toggleDarkMode}
+          className="flex items-center gap-2 text-sm px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded w-full"
+        >
+          {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          {darkMode ? "Modo claro" : "Modo oscuro"}
+        </button>
+      </div>
+    </aside>
   );
 }
 

@@ -51,7 +51,7 @@ function Navbar() {
           <Link to="/dashboard" className="hover:underline">Panel</Link>
           <Link to="/rooms" className="hover:underline">Habitaciones</Link>
           <Link to="/reservations" className="hover:underline">Reservas</Link>
-
+          <Link to="/guests" className="hover:underline">Huéspedes</Link>
      
           <button
             onClick={toggleDarkMode}
@@ -78,7 +78,7 @@ function Navbar() {
           <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Panel</Link>
           <Link to="/rooms" onClick={() => setMenuOpen(false)}>Habitaciones</Link>
           <Link to="/reservations" onClick={() => setMenuOpen(false)}>Reservas</Link>
-
+          <Link to="/guests" className="hover:underline">Huéspedes</Link>
     
           <button
             onClick={toggleDarkMode}

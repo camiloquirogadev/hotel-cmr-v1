@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Rooms from "./pages/Rooms";
 import Reservations from "./pages/Reservations";
+import Guests from "./pages/Guests";
 
 // Componente protegido
 function ProtectedRoute({ children }) {
@@ -17,7 +18,7 @@ function ProtectedRoute({ children }) {
 function App() {
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
@@ -44,6 +45,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/guests"
+          element={
+            <ProtectedRoute>
+              <Guests />
+            </ProtectedRoute>
+             }/>
         {/* Redirigir ruta raíz al dashboard o login */}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

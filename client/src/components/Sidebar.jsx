@@ -39,53 +39,57 @@ function Sidebar() {
   };
 
   return (
-    <aside className={`h-screen bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
-      <div className="h-16 flex items-center justify-between px-4 border-b dark:border-slate-700">
-        <h1 className={`text-xl font-bold text-pink-600 transition-all ${collapsed ? "hidden" : "block"}`}>Hotel CMR</h1>
-        <button onClick={() => setCollapsed(!collapsed)} className="text-slate-500 dark:text-slate-300">
-          {collapsed ? "→" : "←"}
-        </button>
-      </div>
-      <nav className="flex flex-col gap-2 mt-4 px-2">
-        {links.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition hover:bg-pink-100 dark:hover:bg-pink-800 ${
-              location.pathname === link.to
-                ? "bg-pink-200 dark:bg-pink-800 text-pink-900 dark:text-white"
-                : "text-slate-600 dark:text-slate-300"
-            }`}
-          >
-            {link.icon}
-            {!collapsed && link.label}
-          </Link>
-        ))}
-      </nav>
+<aside className={`flex flex-col h-screen bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+  <div className="h-16 flex items-center justify-between px-4 border-b dark:border-slate-700">
+    <h1 className={`text-xl font-bold text-pink-600 transition-all ${collapsed ? "hidden" : "block"}`}>Hotel CMR</h1>
+    <button onClick={() => setCollapsed(!collapsed)} className="text-slate-500 dark:text-slate-300">
+      {collapsed ? "→" : "←"}
+    </button>
+  </div>
 
-      <div className="absolute bottom-0 w-full px-4 py-3 border-t dark:border-slate-700 text-sm">
-        {!collapsed && (
-          <>
-            <p className="mb-1 text-slate-500 dark:text-slate-300">
-              👋 Hola, <span className="font-semibold">{user.user?.name}</span>
-            </p>
-            <button
-              onClick={handleLogout}
-              className="w-full bg-pink-600 hover:bg-pink-700 text-white py-1 rounded mb-2"
-            >
-              Cerrar sesión
-            </button>
-          </>
-        )}
+  {/* NAV principal con flex-grow para empujar el footer */}
+  <nav className="flex-1 flex flex-col gap-2 px-2 py-4">
+    {links.map((link) => (
+      <Link
+        key={link.to}
+        to={link.to}
+        className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition hover:bg-pink-100 dark:hover:bg-pink-800 ${
+          location.pathname === link.to
+            ? "bg-pink-200 dark:bg-pink-800 text-pink-900 dark:text-white"
+            : "text-slate-600 dark:text-slate-300"
+        }`}
+      >
+        {link.icon}
+        {!collapsed && link.label}
+      </Link>
+    ))}
+  </nav>
+
+  {/* BLOQUE inferior fijo abajo */}
+  <div className={`w-full px-4 py-3 border-t dark:border-slate-700 text-sm ${collapsed ? "px-2" : "px-4"}`}>
+    {!collapsed && (
+      <>
+        <p className="mb-1 text-slate-500 dark:text-slate-300">
+          👋 Hola, <span className="font-semibold">{user.user?.name}</span>
+        </p>
         <button
-          onClick={toggleTheme}
-          className="w-full flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 border px-2 py-1 rounded"
+          onClick={handleLogout}
+          className="w-full bg-pink-600 hover:bg-pink-700 text-white py-1 rounded mb-2"
         >
-          {darkMode ? <Moon size={18} /> : <Sun size={18} />}
-          {!collapsed && (darkMode ? "Modo oscuro" : "Modo claro")}
+          Cerrar sesión
         </button>
-      </div>
-    </aside>
+      </>
+    )}
+    <button
+      onClick={toggleTheme}
+      className="w-full flex items-center justify-center gap-2 text-slate-600 dark:text-slate-300 border px-2 py-1 rounded"
+    >
+      {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+      {!collapsed && (darkMode ? "Modo oscuro" : "Modo claro")}
+    </button>
+  </div>
+</aside>
+
   );
 }
 
